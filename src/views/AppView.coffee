@@ -6,7 +6,10 @@ class window.AppView extends Backbone.View
   '
 
   events:
-    'click .hit-button': -> @model.get('playerHand').hit()
+    'click .hit-button': ->
+      @model.get('playerHand').hit()
+      @model.updateScores()
+      @render()
     'click .stand-button': -> @model.get('playerHand').stand()
 
   initialize: ->
@@ -15,6 +18,6 @@ class window.AppView extends Backbone.View
   render: ->
     @$el.children().detach()
     @$el.html @template()
-    @$('.player-hand-container').html new HandView(collection: @model.get 'playerHand').el
-    @$('.dealer-hand-container').html new HandView(collection: @model.get 'dealerHand').el
-
+    @$('.player-hand-container').html new HandView(collection: @model.get( 'playerHand' ), model: @model).el
+    @$('.dealer-hand-container').html new HandView(collection: @model.get( 'dealerHand' ), model: @model).el
+    return
