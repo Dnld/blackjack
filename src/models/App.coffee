@@ -10,6 +10,7 @@ class window.App extends Backbone.Model
     # @set 'dealerTurn', false
     @set 'gameOver', false
     @set 'revealed', true
+    @set 'winner', null
 
   updateScores: ->
     @set 'playerScore', @get( 'playerHand' ).scores()
@@ -18,15 +19,23 @@ class window.App extends Backbone.Model
   checkForWinner: ->
     if @get( 'gameOver' )
       if @get( 'playerScore' ) > @get('dealerScore')
-        window.alert('player wins')
+        @set 'winner', 'Player'
+        @alertWinner()
       else
-        window.alert('dealer wins')
+        @set 'winner', 'Dealer'
+        @alertWinner()
 
     if @get( 'playerScore' ) > 21
-      window.alert 'dealer wins'
+      @set 'winner', 'Dealer'
+      @alertWinner()
     else if @get( 'dealerScore' ) > 21
-      window.alert 'player wins'
+      @set 'winner', 'Player'
+      @alertWinner()
       @set 'gameOver', true
+
+  alertWinner: ->
+    winner = @get 'winner'
+    window.alert "#{winner} wins!!"
 
   dealerHits: ->
     @get( 'dealerHand' ).at(0).flip()
@@ -35,7 +44,7 @@ class window.App extends Backbone.Model
 
     while( not @get( 'gameOver' ) )
       if @get( 'dealerScore' ) < 17
-        @get( 'dealerHand' ).hit();
+        @get( 'dealerHand' ).hit()
       else
         @set 'gameOver', true
 
