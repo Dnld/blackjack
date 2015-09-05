@@ -7,9 +7,6 @@ class window.App extends Backbone.Model
     @set 'dealerHand', deck.dealDealer()
     @set 'playerScore', @get( 'playerHand' ).scores()
     @set 'dealerScore', @get( 'dealerHand' ).scores()
-    # @set 'dealerTurn', false
-    @set 'gameOver', false
-    @set 'revealed', true
     @set 'winner', null
 
   updateScores: ->
@@ -17,37 +14,50 @@ class window.App extends Backbone.Model
     @set 'dealerScore', @get( 'dealerHand' ).scores()
 
   checkForWinner: ->
-    if @get( 'gameOver' )
-      if @get( 'playerScore' ) > @get('dealerScore')
-        @set 'winner', 'Player'
-        @alertWinner()
-      else
-        @set 'winner', 'Dealer'
-        @alertWinner()
+    if @get( 'dealerScore' ) > 21
+      @set 'winner', 'Player'
+      @alertWinner()
+    else if @get( 'playerScore' ) > @get('dealerScore')
+      @set 'winner', 'Player'
+      @alertWinner()
+    else
+      @set 'winner', 'Dealer'
+      @alertWinner()
 
+  checkBust: ->
     if @get( 'playerScore' ) > 21
       @set 'winner', 'Dealer'
       @alertWinner()
-    else if @get( 'dealerScore' ) > 21
-      @set 'winner', 'Player'
-      @alertWinner()
-      @set 'gameOver', true
 
-  alertWinner: ->
-    winner = @get 'winner'
-    window.alert "#{winner} wins!!"
+  onStand: ->
 
-  dealerHits: ->
     @get( 'dealerHand' ).at(0).flip()
     @updateScores()
     @trigger('render', @)
+    setTimeout @startDealerTurn, 1000
 
-    while( not @get( 'gameOver' ) )
-      if @get( 'dealerScore' ) < 17
-        @get( 'dealerHand' ).hit()
-      else
-        @set 'gameOver', true
+  startDealerTurn: =>
+    if @get( 'dealerScore' ) > 17
+      @checkForWinner()
+    else
+      @dealerHits()
 
-      @updateScores()
-      @trigger('render', @)
+  alertWinner: ->
+    winner = @get 'winner'
+    window.alert "#{winner} wins!! Would you like to play again?"
+    # if reDeal
+    #   @set 'playerHand', @get('deck').dealPlayer()
+    #   @set 'dealerHand', @get('deck').dealDealer()
+    #   @set 'gameOver', false
+    #   @set 'winner', null
+    #   @trigger('render', @)
+    #   reDeal
+
+  dealerHits: =>
+    @get( 'dealerHand' ).hit()
+    @updateScores()
+    @trigger('render', @)
+    if @get( 'dealerScore' ) <= 17
+      setTimeout @dealerHits, 1000
+    else
       @checkForWinner()

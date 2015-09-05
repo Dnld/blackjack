@@ -10,12 +10,9 @@ class window.AppView extends Backbone.View
       @model.get('playerHand').hit()
       @model.updateScores()
       @render()
-      @model.checkForWinner()
+      @model.checkBust()
     'click .stand-button': ->
-      # @model.set('dealerTurn', true)
-      # @model.get('playerHand').stand()
-      @model.checkForWinner()
-      @model.dealerHits()
+      @model.onStand()
 
   initialize: ->
     @render()
