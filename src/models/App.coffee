@@ -30,7 +30,6 @@ class window.App extends Backbone.Model
       @alertWinner()
 
   onStand: ->
-
     @get( 'dealerHand' ).at(0).flip()
     @updateScores()
     @trigger('render', @)
@@ -44,14 +43,15 @@ class window.App extends Backbone.Model
 
   alertWinner: ->
     winner = @get 'winner'
-    window.alert "#{winner} wins!! Would you like to play again?"
-    # if reDeal
-    #   @set 'playerHand', @get('deck').dealPlayer()
-    #   @set 'dealerHand', @get('deck').dealDealer()
-    #   @set 'gameOver', false
-    #   @set 'winner', null
-    #   @trigger('render', @)
-    #   reDeal
+    reDeal = window.confirm "#{winner} wins!! Would you like to play again?"
+    if reDeal
+      if @get('deck').length < 10
+        @set 'deck', new Deck()
+      @set 'playerHand', @get('deck').dealPlayer()
+      @set 'dealerHand', @get('deck').dealDealer()
+      @updateScores()
+      @set 'winner', null
+      @trigger('render', @)
 
   dealerHits: =>
     @get( 'dealerHand' ).hit()
