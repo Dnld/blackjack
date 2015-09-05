@@ -10,10 +10,16 @@ class window.AppView extends Backbone.View
       @model.get('playerHand').hit()
       @model.updateScores()
       @render()
-    'click .stand-button': -> @model.get('playerHand').stand()
+      @model.checkForWinner()
+    'click .stand-button': ->
+      # @model.set('dealerTurn', true)
+      # @model.get('playerHand').stand()
+      @model.checkForWinner()
+      @model.dealerHits()
 
   initialize: ->
     @render()
+    @model.on 'render', => @render()
 
   render: ->
     @$el.children().detach()
