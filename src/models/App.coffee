@@ -30,9 +30,6 @@ class window.App extends Backbone.Model
       @alertWinner()
 
   onStand: ->
-    @get( 'dealerHand' ).at(0).flip()
-    @updateScores()
-    @trigger('render', @)
     setTimeout @startDealerTurn, 1000
 
   startDealerTurn: =>
@@ -54,10 +51,10 @@ class window.App extends Backbone.Model
       @trigger('render', @)
 
   dealerHits: =>
-    @get( 'dealerHand' ).hit()
-    @updateScores()
-    @trigger('render', @)
-    if @get( 'dealerScore' ) <= 17
-      setTimeout @dealerHits, 1000
-    else
+    if @get( 'dealerScore' ) > 17
       @checkForWinner()
+    else
+      @get( 'dealerHand' ).hit()
+      @updateScores()
+      @trigger('render', @)
+      setTimeout @dealerHits, 1000
